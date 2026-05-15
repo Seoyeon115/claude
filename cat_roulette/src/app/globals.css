@@ -1,0 +1,67 @@
+@import "tailwindcss";
+
+:root {
+  --casino-gold: #D4A017;
+  --casino-dark: #0D0D0D;
+  --casino-felt: #0A1F0F;
+  --background: #0D0D0D;
+  --foreground: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--casino-dark);
+  color: white;
+  font-family: 'Georgia', serif;
+  min-height: 100vh;
+}
+
+/* Particle burst animation */
+@keyframes particle-burst {
+  0% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 1;
+  }
+  60% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0);
+    opacity: 0;
+  }
+}
+
+.particle {
+  position: absolute;
+  pointer-events: none;
+  animation: particle-burst ease-out forwards;
+}
+
+/* Pulsing glow for wheel during spin */
+@keyframes pulse-glow {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Gold shimmer title animation */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.casino-title {
+  background: linear-gradient(90deg, #8B6914, #F0C040, #D4A017, #F0C040, #8B6914);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}

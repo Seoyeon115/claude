@@ -22,6 +22,11 @@ export function useRouletteWheel() {
   });
 
   const spinTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Refs so spin() always reads fresh state without needing it in deps
+  const configRef = useRef(config);
+  configRef.current = config;
+  const spinStateRef = useRef(spinState);
+  spinStateRef.current = spinState;
 
   const updateSectionCount = useCallback((count: number) => {
     if (spinTimeoutRef.current) {
@@ -37,34 +42,30 @@ export function useRouletteWheel() {
     });
   }, []);
 
-  const spin = useCallback(
-    (currentSections = config.sections, currentRotation = spinState.currentRotation) => {
-      if (spinState.isSpinning) return;
+  const spin = useCallback(() => {
+    if (spinStateRef.current.isSpinning) return;
 
-      const { targetRotation, winner } = generateSpinTarget(
-        currentRotation,
-        currentSections
-      );
+    const { targetRotation, winner } = generateSpinTarget(
+      spinStateRef.current.currentRotation,
+      configRef.current.sections
+    );
 
-      setSpinState((prev) => ({
-        ...prev,
-        isSpinning: true,
+    setSpinState((prev) => ({
+      ...prev,
+      isSpinning: true,
+      targetRotation,
+      winner: null,
+    }));
+
+    spinTimeoutRef.current = setTimeout(() => {
+      setSpinState({
+        isSpinning: false,
+        currentRotation: targetRotation,
         targetRotation,
-        winner: null,
-      }));
-
-      // After animation completes, commit new rotation and reveal winner
-      spinTimeoutRef.current = setTimeout(() => {
-        setSpinState({
-          isSpinning: false,
-          currentRotation: targetRotation,
-          targetRotation,
-          winner,
-        });
-      }, SPIN_DURATION_MS + SPIN_BUFFER_MS);
-    },
-    [spinState, config.sections]
-  );
+        winner,
+      });
+    }, SPIN_DURATION_MS + SPIN_BUFFER_MS);
+  }, []);
 
   return { config, spinState, spin, updateSectionCount };
 }

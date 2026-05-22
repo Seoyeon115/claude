@@ -62,6 +62,7 @@ export default function HomePage() {
       ...data,
     });
     if (error) setError(error.message);
+    else loadMemos(board.id);
   }
 
   async function handleUpdate(id: string, data: Partial<Pick<Memo, "title" | "content" | "author" | "color">>) {

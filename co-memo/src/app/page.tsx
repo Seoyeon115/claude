@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useEffect, useState, useCallback } from "react";
 import { supabase, Board, Memo, MemoColor } from "@/lib/supabase";
 import { MemoCard } from "@/components/MemoCard";
